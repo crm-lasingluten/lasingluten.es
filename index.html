@@ -16,24 +16,12 @@
      Poppins como respaldo visual, así el sitio ya se ve bien.
      ============================================================ */
   @font-face{
-    font-family:'Matrice';
-    src:url('./fonts/Matrice-Regular.woff2') format('woff2');
-    font-weight:400; font-style:normal; font-display:swap;
+    font-family:'Matrice'; src:url('./fonts/Matrice-Regular.otf') format('opentype');
+    font-weight:400 500; font-style:normal; font-display:swap;
   }
   @font-face{
-    font-family:'Matrice';
-    src:url('./fonts/Matrice-Medium.woff2') format('woff2');
-    font-weight:500; font-style:normal; font-display:swap;
-  }
-  @font-face{
-    font-family:'Matrice';
-    src:url('./fonts/Matrice-SemiBold.woff2') format('woff2');
-    font-weight:600; font-style:normal; font-display:swap;
-  }
-  @font-face{
-    font-family:'Matrice';
-    src:url('./fonts/Matrice-Bold.woff2') format('woff2');
-    font-weight:700; font-style:normal; font-display:swap;
+    font-family:'Matrice'; src:url('./fonts/Matrice-Black.otf') format('opentype');
+    font-weight:600 900; font-style:normal; font-display:swap;
   }
 </style>
 <style>
@@ -357,6 +345,16 @@
     .footer-grid{grid-template-columns:1fr; gap:36px;}
     footer .wrap{text-align:left;}
   }
+
+  .cat-heading-row{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .btn-recetas{
+    display:inline-flex; align-items:center; gap:8px; background:var(--ink); color:#fff;
+    font-size:0.8rem; font-weight:700; letter-spacing:0.03em; text-transform:uppercase;
+    padding:11px 22px; border-radius:100px; transition:background .25s ease, transform .25s ease;
+  }
+  .btn-recetas:hover{background:#333; transform:translateY(-2px);}
+  .btn-recetas.outline{background:transparent; color:var(--ink); border:1.5px solid var(--ink); margin-top:20px;}
+  .btn-recetas.outline:hover{background:var(--ink); color:#fff;}
 </style>
 </head>
 <body>
@@ -587,6 +585,7 @@
       <p id="modalDesc"></p>
       <div class="modal-tags" id="modalTags"></div>
       <span class="modal-weight" id="modalWeight"></span>
+      <a class="btn-recetas outline" id="modalRecipe" href="recetas.html" style="display:none">Ver receta</a>
     </div>
   </div>
 </div>
@@ -632,15 +631,15 @@
      desc:'Por fin un pan sin gluten que aguanta el ritmo de tu hamburguesa. Textura tierna y elástica que recupera su forma a cada bocado. Doradito por fuera, jugoso por dentro.'},
     {id:'brownie', name:'Brownie sin gluten', category:'Repostería', weight:'Peso neto: 55g',
      desc:'Déjate conquistar por la intensidad de nuestro chocolate y esa textura melosa que se deshace en la boca: intenso, húmedo y libre de gluten.'},
-    {id:'mezcla_pan', name:'Mezcla para pan', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
+    {id:'mezcla_pan', recipe:'pan', name:'Mezcla para pan', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
      desc:'Tu pan sin gluten casero, con miga tierna y corteza dorada. Fórmula profesional lista para hornear.'},
-    {id:'mezcla_muffin', name:'Mezcla para muffin', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
+    {id:'mezcla_muffin', recipe:'muffins', name:'Mezcla para muffin', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
      desc:'Muffins esponjosos y húmedos, con ese sabor de siempre y sin gluten. Solo añade tus ingredientes favoritos.'},
-    {id:'mezcla_brownie', name:'Mezcla para brownie', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
+    {id:'mezcla_brownie', recipe:'brownie', name:'Mezcla para brownie', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
      desc:'Intenso sabor a chocolate y textura melosa para un brownie sin gluten de pastelería.'},
-    {id:'mezcla_cookie', name:'Mezcla para cookie de chocolate', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
+    {id:'mezcla_cookie', recipe:'cookies', name:'Mezcla para cookie de chocolate', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
      desc:'Cookies de chocolate crujientes por fuera y tiernas por dentro, sin gluten y sin complicaciones.'},
-    {id:'mezcla_pizza', name:'Mezcla para pizza', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
+    {id:'mezcla_pizza', recipe:'pizza', name:'Mezcla para pizza', category:'Mezclas para hornear', weight:'Peso neto: 1Kg',
      desc:'Masa de pizza sin gluten elástica y fácil de estirar, con borde crujiente y sabor auténtico.'},
     {id:'pizza_margarita', name:'Base de pizza margarita — Riquíssima', category:'Línea Pizzas', weight:'Congelado · 350g',
      desc:'Enriquecida con mozzarella seleccionada. Borde perfectamente alveolado y tostado, interior tierno, elástico y con un delicioso fondo lácteo.'},
@@ -690,6 +689,9 @@
     if (cat === 'Línea Pizzas') {
       h.classList.add('cat-heading-brand');
       h.innerHTML = `<span class="cat-label">${cat}</span><div class="brand-logo-wrap"><img src="${RIQUISSIMA_LOGO}" alt="Riquíssima" class="brand-logo-inline"></div>`;
+    } else if (cat === 'Mezclas para hornear') {
+      h.classList.add('cat-heading-row');
+      h.innerHTML = `<span>${cat}</span><a class="btn-recetas" href="recetas.html">🍞 Ver recetas</a>`;
     } else {
       h.textContent = cat;
     }
@@ -724,6 +726,8 @@
       s.textContent = t;
       tagsWrap.appendChild(s);
     });
+    const rl = document.getElementById('modalRecipe');
+    if (p.recipe) { rl.href = 'recetas.html#' + p.recipe; rl.style.display = 'inline-flex'; } else { rl.style.display = 'none'; }
     backdrop.classList.add('open');
     document.body.style.overflow='hidden';
   }

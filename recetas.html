@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-es="Recetario La Sin Gluten" data-en="La Sin Gluten Recipe Book">Recetario La Sin Gluten</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'Matrice';
+    src: url('fonts/Matrice-Regular.otf') format('opentype');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'Matrice';
+    src: url('fonts/Matrice-Black.otf') format('opentype');
+    font-weight: 900;
+  }
+  :root {
+    --azul:#87CEDC; --azul-oscuro:#5aabbf; --negro:#1A1A1A;
+    --crema:#FDF8F2; --crema-oscuro:#F4EDE1; --dorado:#D4A843;
+    --blanco:#FFFFFF; --gris:#6B6B6B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--crema);font-family:'Nunito',sans-serif;color:var(--negro);overflow-x:hidden;}
+
+  /* LANGUAGE SWITCHER */
+  .lang-switcher{
+    position:fixed;top:16px;right:16px;z-index:999;
+    display:flex;gap:6px;
+    background:var(--negro);border-radius:50px;
+    padding:6px 10px;box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  }
+  .lang-btn{
+    background:transparent;border:none;cursor:pointer;
+    color:rgba(135,206,220,0.5);font-family:'Nunito',sans-serif;
+    font-size:0.85rem;font-weight:700;padding:4px 12px;
+    border-radius:50px;transition:all 0.2s;letter-spacing:0.05em;
+  }
+  .lang-btn.active{background:var(--azul);color:var(--negro);}
+  .lang-btn:hover:not(.active){color:var(--azul);}
+
+  /* HERO */
+  .hero{background:var(--negro);position:relative;padding:70px 20px 90px;text-align:center;overflow:hidden;}
+  .hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 0%,rgba(135,206,220,0.15) 0%,transparent 70%);pointer-events:none;}
+  .hero-deco{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:420px;height:420px;border-radius:50%;border:2px dashed rgba(135,206,220,0.18);pointer-events:none;}
+  .logo-wrap{position:relative;display:inline-block;margin-bottom:24px;}
+  .logo-wrap img{width:160px;height:160px;border-radius:50%;object-fit:cover;}
+  .hero h1{font-family:'Matrice',serif;font-weight:400;font-size:clamp(2rem,6vw,3.2rem);color:var(--azul);letter-spacing:0.04em;margin-bottom:10px;line-height:1.1;}
+  .hero .subtitle{font-size:0.9rem;color:rgba(135,206,220,0.7);letter-spacing:0.28em;text-transform:uppercase;font-weight:700;margin-bottom:16px;}
+  .hero .tagline{font-family:'Playfair Display',serif;font-style:italic;color:rgba(255,255,255,0.4);font-size:1rem;}
+
+  /* WAVE */
+  .wave-div{display:block;width:100%;line-height:0;}
+
+  /* TOC */
+  .toc{background:var(--azul);padding:40px 20px;text-align:center;}
+  .toc h2{font-family:'Matrice',serif;font-weight:400;font-size:1.5rem;color:var(--negro);margin-bottom:22px;letter-spacing:0.05em;}
+  .toc-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:800px;margin:0 auto;}
+  .toc-item{background:var(--negro);color:var(--azul);border-radius:50px;padding:10px 20px;font-weight:700;font-size:0.88rem;text-decoration:none;transition:transform 0.2s,background 0.2s;display:flex;align-items:center;gap:8px;}
+  .toc-item:hover{transform:translateY(-2px);background:#2a2a2a;}
+
+  /* MAIN */
+  main{max-width:900px;margin:0 auto;padding:20px 20px 80px;}
+
+  /* CARD */
+  .recipe-card{background:var(--blanco);border-radius:24px;margin:48px 0;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.09);position:relative;opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease;}
+  .recipe-card.visible{opacity:1;transform:translateY(0);}
+  .recipe-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--azul),var(--dorado));z-index:2;}
+
+  /* CARD IMAGE */
+  .card-image-wrap{width:100%;height:280px;overflow:hidden;background:#1A1A1A;}
+  .card-image{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transform:scale(1.15);}
+  .card-image.scale-lg{transform:scale(1.30);}
+  .card-image.scale-xl{transform:scale(1.50);}
+
+  /* CARD HEADER */
+  .card-header{background:var(--negro);padding:28px 40px 22px;position:relative;overflow:hidden;}
+  .card-header::after{content:'';position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(135,206,220,0.07);pointer-events:none;}
+  .card-header h2{font-family:'Matrice',serif;font-weight:400;font-size:clamp(1.5rem,4vw,2.1rem);color:var(--azul);line-height:1.15;margin-bottom:8px;letter-spacing:0.04em;}
+  .card-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+  .meta-pill{background:rgba(135,206,220,0.13);color:var(--azul);border:1px solid rgba(135,206,220,0.3);border-radius:20px;padding:5px 14px;font-size:0.8rem;font-weight:700;letter-spacing:0.04em;display:flex;align-items:center;gap:5px;}
+
+  /* CARD BODY */
+  .card-body{padding:36px 40px;}
+  .section-title{font-family:'Matrice',serif;font-weight:400;font-size:1.2rem;color:var(--negro);margin-bottom:16px;display:flex;align-items:center;gap:10px;letter-spacing:0.04em;}
+  .section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--azul),transparent);}
+
+  /* INGREDIENTS */
+  .ingredients-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:32px;}
+  .ingredient-item{background:var(--crema);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;border-left:3px solid var(--azul);}
+  .ingredient-emoji{display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex-shrink:0;}
+  .ingredient-icon-img{width:36px;height:36px;object-fit:contain;display:block;}
+  .ingredient-text{font-size:0.87rem;line-height:1.3;}
+  .ingredient-name{font-weight:700;color:var(--negro);}
+  .ingredient-amount{color:var(--gris);font-size:0.82rem;}
+
+  /* STEPS */
+  .steps-list{list-style:none;display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+  .step-item{display:flex;gap:16px;align-items:flex-start;}
+  .step-number{width:34px;height:34px;border-radius:50%;background:var(--negro);color:var(--azul);font-family:'Matrice',serif;font-size:1rem;font-weight:400;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+  .step-text{font-size:0.91rem;line-height:1.65;color:#333;padding-top:5px;}
+
+  /* NOTES */
+  .notes-box{background:linear-gradient(135deg,rgba(135,206,220,0.1),rgba(212,168,67,0.07));border-radius:14px;padding:16px 20px;border:1px dashed rgba(135,206,220,0.4);margin-top:8px;}
+  .notes-box p{font-size:0.86rem;color:var(--gris);line-height:1.6;}
+  .notes-box strong{color:var(--azul-oscuro);}
+
+  /* DIVIDER */
+  .recipe-divider{text-align:center;padding:8px;color:rgba(135,206,220,0.4);font-size:1.3rem;letter-spacing:0.5em;}
+
+  /* FOOTER */
+  footer{background:var(--negro);padding:48px 20px;text-align:center;}
+  footer .footer-logo{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:16px;opacity:0.85;}
+  footer .footer-brand{font-family:'Matrice',serif;font-weight:400;color:var(--azul);font-size:1.2rem;margin-bottom:6px;letter-spacing:0.05em;}
+  footer p{color:rgba(135,206,220,0.55);font-size:0.85rem;line-height:1.8;}
+
+  @media(max-width:600px){
+    .card-body,.card-header{padding:22px 18px;}
+    .ingredients-grid{grid-template-columns:1fr;}
+    .card-image-wrap{height:200px;}
+    .lang-switcher{top:10px;right:10px;}
+  }
+
+  .back-link{position:fixed;top:16px;left:16px;z-index:999;background:var(--negro);color:var(--azul);text-decoration:none;font-weight:700;font-size:0.85rem;padding:10px 18px;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:background .2s;}
+  .back-link:hover{background:#2a2a2a;}
+  @media(max-width:600px){.back-link{top:10px;left:10px;padding:8px 14px;font-size:0.78rem;}}
+</style>
+</head>
+<body>
+<a class="back-link" href="./#catalogo" data-es="← Volver al catálogo" data-en="← Back to catalogue">← Volver al catálogo</a>
+
+<!-- LANGUAGE SWITCHER -->
+<div class="lang-switcher">
+  <button class="lang-btn active" onclick="setLang('es')" id="btn-es">ES</button>
+  <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-deco"></div>
+  <div class="logo-wrap">
+    <img src="assets/recetas/img2.jpg" alt="La Sin Gluten">
+  </div>
+  <p class="subtitle" data-es="Recetario Oficial" data-en="Official Recipe Book">Recetario Oficial</p>
+  <h1>La Sin Gluten</h1>
+  <p class="tagline" data-es="Recetas para hornear sin límites, en casa y en tu obrador" data-en="Recipes to bake without limits, at home and in your bakery">Recetas para hornear sin límites, en casa y en tu obrador</p>
+</section>
+
+<svg class="wave-div" viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <path d="M0,60 L0,30 Q180,0 360,30 Q540,60 720,30 Q900,0 1080,30 Q1260,60 1440,30 L1440,60 Z" fill="#87CEDC"/>
+</svg>
+
+<!-- TOC -->
+<nav class="toc">
+  <h2 data-es="Nuestras Recetas" data-en="Our Recipes">Nuestras Recetas</h2>
+  <div class="toc-grid">
+    <a href="#pan" class="toc-item"><span data-es="🍞 Pan" data-en="🍞 Bread">🍞 Pan</span></a>
+    <a href="#panecillos" class="toc-item"><span data-es="🥖 Panecillos" data-en="🥖 Gluten-Free Rolls">🥖 Panecillos</span></a>
+    <a href="#pizza" class="toc-item"><span data-es="🍕 Base de Pizza" data-en="🍕 Pizza Base">🍕 Base de Pizza</span></a>
+    <a href="#brownie" class="toc-item"><span data-es="🍫 Brownies" data-en="🍫 Brownies">🍫 Brownies</span></a>
+    <a href="#cookies" class="toc-item"><span data-es="🍪 Cookies de Chocolate" data-en="🍪 Chocolate Cookies">🍪 Cookies de Chocolate</span></a>
+    <a href="#muffins" class="toc-item"><span data-es="🧁 Muffins" data-en="🧁 Muffins">🧁 Muffins</span></a>
+  </div>
+</nav>
+
+<svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display:block;width:100%;line-height:0;background:var(--crema);">
+  <path d="M0,0 L0,30 Q180,60 360,30 Q540,0 720,30 Q900,60 1080,30 Q1260,0 1440,30 L1440,0 Z" fill="#87CEDC"/>
+</svg>
+
+<main>
+
+<!-- ====== PAN ====== -->
+<article class="recipe-card" id="pan">
+  <div class="card-image-wrap">
+    <img src="assets/recetas/img3.jpg" alt="Pan Gluten Free" class="card-image scale-lg">
+  </div>
+  <div class="card-header">
+    <h2 data-es="Pan Sin Gluten" data-en="Gluten-Free Bread">Pan Sin Gluten</h2>
+    <div class="card-meta">
+      <span class="meta-pill" data-es="240°C → 230°C" data-en="240°C → 230°C">🌡️ 240°C → 230°C</span>
+      <span class="meta-pill" data-es="22–24 min" data-en="22–24 min">⏱️ 22–24 min</span>
+      <span class="meta-pill" data-es="Fermentación 40–50 min" data-en="Proving 40–50 min">🔄 Fermentación 40–50 min</span>
+      <span class="meta-pill" data-es="90 g / unidad" data-en="90 g / piece">⚖️ 90 g / unidad</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <h3 class="section-title" data-es="🛒 Ingredientes" data-en="🛒 Ingredients">🛒 Ingredientes</h3>
+    <div class="ingredients-grid">
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img4.png" alt="Mezcla Pan Sin Gluten" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Mezcla Pan Sin Gluten" data-en="Gluten-Free Bread Mix">Mezcla Pan Sin Gluten</div>
+        <div class="ingredient-amount">1,000 kg</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img5.png" alt="Agua" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Agua" data-en="Water">Agua</div>
+        <div class="ingredient-amount">840 g</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img6.png" alt="Aceite vegetal" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Aceite vegetal" data-en="Vegetable oil">Aceite vegetal</div>
+        <div class="ingredient-amount">50 g</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img7.png" alt="Levadura seca de panadería" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Levadura seca de panadería" data-en="Dried baker's yeast">Levadura seca de panadería</div>
+        <div class="ingredient-amount">30–40 g</div>
+      </div>
+    </div>
+    </div>
+    <h3 class="section-title" data-es="👨‍🍳 Preparación" data-en="👨‍🍳 Method">👨‍🍳 Preparación</h3>
+    <ol class="steps-list">
+      <li class="step-item">
+      <span class="step-number">1</span>
+      <p class="step-text" data-es="<strong>Amasado:</strong> Usa una batidora con ganchos (KitchenAid o similar). Amasa 3 minutos a velocidad baja para integrar, luego 3 minutos a velocidad media-alta. Si lo haces a mano, mezcla con espátula rígida con fuerza — la masa sin gluten es muy pegajosa." data-en="<strong>Mixing:</strong> Use a stand mixer fitted with dough hooks (KitchenAid or similar). Mix for 3 minutes on low speed to combine, then 3 minutes on medium-high. If mixing by hand, use a stiff spatula and work the dough firmly — gluten-free dough is very sticky."><strong>Amasado:</strong> Usa una batidora con ganchos (KitchenAid o similar). Amasa 3 minutos a velocidad baja para integrar, luego 3 minutos a velocidad media-alta. Si lo haces a mano, mezcla con espátula rígida con fuerza — la masa sin gluten es muy pegajosa.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">2</span>
+      <p class="step-text" data-es="<strong>Formado:</strong> Con las manos aceitadas, divide la masa en porciones de <strong>90 g</strong>. Bolea y dales forma redonda. Colócalas en una bandeja engrasada o con papel para hornear." data-en="<strong>Shaping:</strong> With oiled hands, divide the dough into <strong>90 g</strong> portions. Shape each into a round ball and place on a greased baking tray or one lined with baking paper."><strong>Formado:</strong> Con las manos aceitadas, divide la masa en porciones de <strong>90 g</strong>. Bolea y dales forma redonda. Colócalas en una bandeja engrasada o con papel para hornear.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">3</span>
+      <p class="step-text" data-es="<strong>Fermentación:</strong> Deja levar en un lugar cálido (como dentro del microondas apagado) durante <strong>40–50 minutos</strong>. Haz dos cortes diagonales en la parte superior con un cuchillo muy afilado." data-en="<strong>Proving:</strong> Leave to prove in a warm spot (such as inside a switched-off microwave) for <strong>40–50 minutes</strong>. Score the top with two diagonal cuts using a very sharp knife."><strong>Fermentación:</strong> Deja levar en un lugar cálido (como dentro del microondas apagado) durante <strong>40–50 minutos</strong>. Haz dos cortes diagonales en la parte superior con un cuchillo muy afilado.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">4</span>
+      <p class="step-text" data-es="<strong>Vapor casero:</strong> Coloca una bandeja vacía en el fondo del horno mientras se precalienta. Al meter el pan, vierte medio vaso de agua hirviendo en esa bandeja y cierra la puerta rápidamente." data-en="<strong>Steam trick:</strong> Place an empty baking tray on the bottom shelf whilst the oven preheats. When you put the bread in, pour half a glass of boiling water onto that tray and close the door quickly."><strong>Vapor casero:</strong> Coloca una bandeja vacía en el fondo del horno mientras se precalienta. Al meter el pan, vierte medio vaso de agua hirviendo en esa bandeja y cierra la puerta rápidamente.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">5</span>
+      <p class="step-text" data-es="<strong>Horneado:</strong> Precalienta el horno a <strong>240°C</strong>. A los 5 minutos baja a <strong>230°C</strong>. Tiempo total: <strong>22–24 minutos</strong>." data-en="<strong>Baking:</strong> Preheat the oven to <strong>240°C / 220°C fan</strong>. After 5 minutes, reduce to <strong>230°C / 210°C fan</strong>. Total baking time: <strong>22–24 minutes</strong>."><strong>Horneado:</strong> Precalienta el horno a <strong>240°C</strong>. A los 5 minutos baja a <strong>230°C</strong>. Tiempo total: <strong>22–24 minutos</strong>.</p>
+    </li>
+    </ol>
+  </div>
+</article>
+
+<div class="recipe-divider">· · · ✦ · · ·</div>
+
+<!-- ====== PANECILLOS ====== -->
+<article class="recipe-card" id="panecillos">
+  <div class="card-image-wrap">
+    <img src="assets/recetas/img8.jpg" alt="Panecillos Gluten Free" class="card-image" style="object-position: center 20%;">
+  </div>
+  <div class="card-header">
+    <h2 data-es="Panecillos / Tipo Baguette" data-en="Gluten-Free Rolls">Panecillos / Tipo Baguette</h2>
+    <div class="card-meta">
+      <span class="meta-pill" data-es="240°C → 220°C" data-en="240°C → 220°C">🌡️ 240°C → 220°C</span>
+      <span class="meta-pill" data-es="22–24 min" data-en="22–24 min">⏱️ 22–24 min</span>
+      <span class="meta-pill" data-es="Fermentación 40–50 min" data-en="Proving 40–50 min">🔄 Fermentación 40–50 min</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <h3 class="section-title" data-es="🛒 Ingredientes" data-en="🛒 Ingredients">🛒 Ingredientes</h3>
+    <div class="ingredients-grid">
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img4.png" alt="Mezcla Panecillo Sin Gluten" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Mezcla Panecillo Sin Gluten" data-en="Gluten-Free Roll Mix">Mezcla Panecillo Sin Gluten</div>
+        <div class="ingredient-amount">1,000 kg</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img5.png" alt="Agua" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Agua" data-en="Water">Agua</div>
+        <div class="ingredient-amount">840 g (aprox.)</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img6.png" alt="Aceite vegetal" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Aceite vegetal" data-en="Vegetable oil">Aceite vegetal</div>
+        <div class="ingredient-amount">50 g</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img7.png" alt="Levadura seca" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Levadura seca" data-en="Dried yeast">Levadura seca</div>
+        <div class="ingredient-amount">30–40 g</div>
+      </div>
+    </div>
+    </div>
+    <h3 class="section-title" data-es="👨‍🍳 Preparación" data-en="👨‍🍳 Method">👨‍🍳 Preparación</h3>
+    <ol class="steps-list">
+      <li class="step-item">
+      <span class="step-number">1</span>
+      <p class="step-text" data-es="<strong>Amasado:</strong> Mismo proceso que el pan — 3 min a velocidad media-alta, luego 3 min a velocidad baja. Sin reposo inicial." data-en="<strong>Mixing:</strong> Same process as the bread — 3 minutes on medium-high speed, then 3 minutes on low. No initial resting time required."><strong>Amasado:</strong> Mismo proceso que el pan — 3 min a velocidad media-alta, luego 3 min a velocidad baja. Sin reposo inicial.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">2</span>
+      <p class="step-text" data-es="<strong>Formado:</strong> Divide la masa, bólala en esferas y luego rodándola sobre la mesa enharinada con almidón, estírala a lo largo para hacer bastones o minibaguettes. Colócalas con el pliegue del cierre hacia abajo." data-en="<strong>Shaping:</strong> Divide the dough, roll into balls, then roll on a lightly dusted surface (with starch) to form baton shapes. Place seam-side down on the baking tray. Score two diagonal cuts on each."><strong>Formado:</strong> Divide la masa, bólala en esferas y luego rodándola sobre la mesa enharinada con almidón, estírala a lo largo para hacer bastones o minibaguettes. Colócalas con el pliegue del cierre hacia abajo.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">3</span>
+      <p class="step-text" data-es="<strong>Fermentación:</strong> Deja levar <strong>40–50 minutos</strong>." data-en="<strong>Proving:</strong> Leave to prove for <strong>40–50 minutes</strong>."><strong>Fermentación:</strong> Deja levar <strong>40–50 minutos</strong>.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">4</span>
+      <p class="step-text" data-es="<strong>Vapor y horneado:</strong> Usa el truco del vaso de agua hirviendo en la bandeja del fondo. Hornea a <strong>240°C</strong> bajando a <strong>220°C</strong> a mitad de cocción. Tiempo total: <strong>22–24 minutos</strong>." data-en="<strong>Steam and baking:</strong> Use the boiling water steam trick on the bottom tray. Bake at <strong>240°C / 220°C fan</strong>, reducing to <strong>220°C / 200°C fan</strong> halfway through. Total time: <strong>22–24 minutes</strong>."><strong>Vapor y horneado:</strong> Usa el truco del vaso de agua hirviendo en la bandeja del fondo. Hornea a <strong>240°C</strong> bajando a <strong>220°C</strong> a mitad de cocción. Tiempo total: <strong>22–24 minutos</strong>.</p>
+    </li>
+    </ol>
+  </div>
+</article>
+
+<div class="recipe-divider">· · · ✦ · · ·</div>
+
+<!-- ====== PIZZA ====== -->
+<article class="recipe-card" id="pizza">
+  <div class="card-image-wrap">
+    <img src="assets/recetas/img9.jpg" alt="Base de Pizza Gluten Free" class="card-image">
+  </div>
+  <div class="card-header">
+    <h2 data-es="Base de Pizza Sin Gluten" data-en="Gluten-Free Pizza Base">Base de Pizza Sin Gluten</h2>
+    <div class="card-meta">
+      <span class="meta-pill" data-es="240°C (máx.)" data-en="240°C (max.)">🌡️ 240°C (máx.)</span>
+      <span class="meta-pill" data-es="10–12 min" data-en="10–12 min">⏱️ 10–12 min</span>
+      <span class="meta-pill" data-es="Fermentación 40–50 min" data-en="Proving 40–50 min">🔄 Fermentación 40–50 min</span>
+      <span class="meta-pill" data-es="180 g pizza individual" data-en="180 g individual pizza">⚖️ 180 g pizza individual</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <h3 class="section-title" data-es="🛒 Ingredientes" data-en="🛒 Ingredients">🛒 Ingredientes</h3>
+    <div class="ingredients-grid">
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img4.png" alt="Mezcla Pizza Sin Gluten" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Mezcla Pizza Sin Gluten" data-en="Gluten-Free Pizza Mix">Mezcla Pizza Sin Gluten</div>
+        <div class="ingredient-amount">1,000 kg</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img5.png" alt="Agua fría" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Agua fría" data-en="Cold water">Agua fría</div>
+        <div class="ingredient-amount">800 g</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img6.png" alt="Aceite vegetal" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Aceite vegetal" data-en="Vegetable oil">Aceite vegetal</div>
+        <div class="ingredient-amount">100 g</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img7.png" alt="Levadura seca" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Levadura seca" data-en="Dried yeast">Levadura seca</div>
+        <div class="ingredient-amount">30–40 g</div>
+      </div>
+    </div>
+    </div>
+    <h3 class="section-title" data-es="👨‍🍳 Preparación" data-en="👨‍🍳 Method">👨‍🍳 Preparación</h3>
+    <ol class="steps-list">
+      <li class="step-item">
+      <span class="step-number">1</span>
+      <p class="step-text" data-es="<strong>Amasado:</strong> Mezcla todo en un bol grande con la batidora y ganchos — 3 min a velocidad lenta, luego 3 min rápido. Sin reposo." data-en="<strong>Mixing:</strong> Combine everything in a large bowl using a stand mixer with dough hooks — 3 minutes on low, then 3 minutes on high. No resting time needed."><strong>Amasado:</strong> Mezcla todo en un bol grande con la batidora y ganchos — 3 min a velocidad lenta, luego 3 min rápido. Sin reposo.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">2</span>
+      <p class="step-text" data-es="<strong>Porciones en casa:</strong> Divide en <strong>5–6 porciones de 300–350 g</strong> para pizzas familiares, o en <strong>10 porciones de 180 g</strong> para pizzas individuales." data-en="<strong>Portioning:</strong> Divide into <strong>5–6 portions of 300–350 g</strong> for family-sized pizzas, or <strong>10 portions of 180 g</strong> for individual pizzas."><strong>Porciones en casa:</strong> Divide en <strong>5–6 porciones de 300–350 g</strong> para pizzas familiares, o en <strong>10 porciones de 180 g</strong> para pizzas individuales.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">3</span>
+      <p class="step-text" data-es="<strong>Estirado:</strong> Pon papel de horno en la mesa, coloca la porción, añade un chorrito de aceite encima y estírala con las manos o un rodillo hasta <strong>2–3 mm</strong>. Pásala con el papel a tu bandeja. Añade tomate, queso y tus ingredientes." data-en="<strong>Rolling:</strong> Place baking paper on your worktop, put the dough portion on top, drizzle with a little oil, then stretch with your hands or a rolling pin to <strong>2–3 mm</strong> thickness. Slide the dough and paper onto your baking tray. Add your tomato sauce, cheese, and toppings."><strong>Estirado:</strong> Pon papel de horno en la mesa, coloca la porción, añade un chorrito de aceite encima y estírala con las manos o un rodillo hasta <strong>2–3 mm</strong>. Pásala con el papel a tu bandeja. Añade tomate, queso y tus ingredientes.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">4</span>
+      <p class="step-text" data-es="<strong>Fermentación y horneado:</strong> Deja reposar la pizza armada <strong>40–50 minutos</strong> para que la masa fermente. Hornea a temperatura máxima <strong>(240°C)</strong> durante <strong>10–12 minutos</strong> hasta que los bordes doren." data-en="<strong>Proving and baking:</strong> Leave the assembled pizza to rest for <strong>40–50 minutes</strong> so the dough can prove. Bake at the highest oven temperature <strong>(240°C / 220°C fan)</strong> for <strong>10–12 minutes</strong> until the edges are golden."><strong>Fermentación y horneado:</strong> Deja reposar la pizza armada <strong>40–50 minutos</strong> para que la masa fermente. Hornea a temperatura máxima <strong>(240°C)</strong> durante <strong>10–12 minutos</strong> hasta que los bordes doren.</p>
+    </li>
+    </ol>
+    <div class="notes-box"><p data-es="💡 <strong>Consejo:</strong> Para pizzas familiares grandes, usa 300–350 g de masa. El reposo de 40–50 min es clave para que la base quede esponjosa por dentro y crujiente por fuera." data-en="💡 <strong>Tip:</strong> For large family pizzas, use 300–350 g of dough. The 40–50 minute resting time is key to achieving a base that's fluffy inside and crispy on the outside.">💡 <strong>Consejo:</strong> Para pizzas familiares grandes, usa 300–350 g de masa. El reposo de 40–50 min es clave para que la base quede esponjosa por dentro y crujiente por fuera.</p></div>
+  </div>
+</article>
+
+<div class="recipe-divider">· · · ✦ · · ·</div>
+
+<!-- ====== BROWNIE ====== -->
+<article class="recipe-card" id="brownie">
+  <div class="card-image-wrap">
+    <img src="assets/recetas/img10.jpg" alt="Brownies Gluten Free" class="card-image scale-lg">
+  </div>
+  <div class="card-header">
+    <h2 data-es="Brownies Sin Gluten" data-en="Gluten-Free Brownies">Brownies Sin Gluten</h2>
+    <div class="card-meta">
+      <span class="meta-pill" data-es="190–200°C" data-en="190–200°C">🌡️ 190–200°C</span>
+      <span class="meta-pill" data-es="30–40 min" data-en="30–40 min">⏱️ 30–40 min</span>
+      <span class="meta-pill" data-es="5–6 huevos medianos" data-en="5–6 medium eggs">🥚 5–6 huevos medianos</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <h3 class="section-title" data-es="🛒 Ingredientes" data-en="🛒 Ingredients">🛒 Ingredientes</h3>
+    <div class="ingredients-grid">
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img4.png" alt="Mezcla Brownie Sin Gluten" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Mezcla Brownie Sin Gluten" data-en="Gluten-Free Brownie Mix">Mezcla Brownie Sin Gluten</div>
+        <div class="ingredient-amount">1,000 kg</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img6.png" alt="Aceite vegetal" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Aceite vegetal" data-en="Vegetable oil">Aceite vegetal</div>
+        <div class="ingredient-amount">460 g</div>
+      </div>
+    </div>
+      <div class="ingredient-item"><span class="ingredient-emoji">🥚</span><div class="ingredient-text"><div class="ingredient-name" data-es="Huevo entero" data-en="Whole egg">Huevo entero</div><div class="ingredient-amount" data-es="300 g (aprox. 5–6 huevos medianos)" data-en="300 g (approx. 5–6 medium eggs)">300 g (aprox. 5–6 huevos medianos)</div></div></div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img5.png" alt="Agua" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Agua" data-en="Water">Agua</div>
+        <div class="ingredient-amount">100 g</div>
+      </div>
+    </div>
+      <div class="ingredient-item"><span class="ingredient-emoji">🍫</span><div class="ingredient-text"><div class="ingredient-name" data-es="Chispas de chocolate con leche" data-en="Milk chocolate chips">Chispas de chocolate con leche</div><div class="ingredient-amount">100 g</div></div></div>
+    </div>
+    <h3 class="section-title" data-es="👨‍🍳 Preparación" data-en="👨‍🍳 Method">👨‍🍳 Preparación</h3>
+    <ol class="steps-list">
+      <li class="step-item">
+      <span class="step-number">1</span>
+      <p class="step-text" data-es="<strong>Mezcla todo junto:</strong> En un bol grande pon todos los ingredientes juntos. Con un batidor de varillas manual grueso o una espátula de repostería, mezcla lentamente durante <strong>3 minutos</strong> hasta que no queden grumos." data-en="<strong>All-in method:</strong> Place all the ingredients together in a large bowl. Using a thick hand whisk or a pastry spatula, mix slowly for <strong>3 minutes</strong> until smooth and lump-free."><strong>Mezcla todo junto:</strong> En un bol grande pon todos los ingredientes juntos. Con un batidor de varillas manual grueso o una espátula de repostería, mezcla lentamente durante <strong>3 minutos</strong> hasta que no queden grumos.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">2</span>
+      <p class="step-text" data-es="<strong>Moldeado:</strong> Vuelca la masa en un molde rectangular (o dos medianos) previamente engrasado o con papel de horno." data-en="<strong>Tin preparation:</strong> Pour the batter into a greased rectangular tin (or two medium-sized tins) lined with baking paper."><strong>Moldeado:</strong> Vuelca la masa en un molde rectangular (o dos medianos) previamente engrasado o con papel de horno.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">3</span>
+      <p class="step-text" data-es="<strong>Horneado:</strong> Hornea en el centro del horno a <strong>190–200°C</strong> durante <strong>30–40 minutos</strong>. Al pinchar con un palillo en el centro, debe salir con apenas unas migajas húmedas — no masa líquida." data-en="<strong>Baking:</strong> Bake on the middle shelf at <strong>190–200°C / 170–180°C fan</strong> for <strong>30–40 minutes</strong>. When you insert a skewer into the centre, it should come out with just a few moist crumbs — not wet batter."><strong>Horneado:</strong> Hornea en el centro del horno a <strong>190–200°C</strong> durante <strong>30–40 minutos</strong>. Al pinchar con un palillo en el centro, debe salir con apenas unas migajas húmedas — no masa líquida.</p>
+    </li>
+    </ol>
+  </div>
+</article>
+
+<div class="recipe-divider">· · · ✦ · · ·</div>
+
+<!-- ====== COOKIES ====== -->
+<article class="recipe-card" id="cookies">
+  <div class="card-image-wrap">
+    <img src="assets/recetas/img11.jpg" alt="Cookies de Chocolate Gluten Free" class="card-image scale-lg">
+  </div>
+  <div class="card-header">
+    <h2 data-es="Galletas de Chocolate Sin Gluten" data-en="Gluten-Free Chocolate Crinkle Cookies">Galletas de Chocolate Sin Gluten</h2>
+    <div class="card-meta">
+      <span class="meta-pill" data-es="170–180°C" data-en="170–180°C">🌡️ 170–180°C</span>
+      <span class="meta-pill" data-es="10–12 min" data-en="10–12 min">⏱️ 10–12 min</span>
+      <span class="meta-pill" data-es="Reposo en frío 30 min" data-en="Chill for 30 min">❄️ Reposo en frío 30 min</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <h3 class="section-title" data-es="🛒 Ingredientes" data-en="🛒 Ingredients">🛒 Ingredientes</h3>
+    <div class="ingredients-grid">
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img4.png" alt="Mezcla Cookie Chocolate Sin Gluten" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Mezcla Cookie Chocolate Sin Gluten" data-en="Gluten-Free Choc Cookie Mix">Mezcla Cookie Chocolate Sin Gluten</div>
+        <div class="ingredient-amount">1,000 kg</div>
+      </div>
+    </div>
+      <div class="ingredient-item"><span class="ingredient-emoji">🧈</span><div class="ingredient-text"><div class="ingredient-name" data-es="Mantequilla blanda (pomada)" data-en="Softened butter (room temp.)">Mantequilla blanda (pomada)</div><div class="ingredient-amount" data-es="300 g" data-en="300 g">300 g</div></div></div>
+      <div class="ingredient-item"><span class="ingredient-emoji">🥚</span><div class="ingredient-text"><div class="ingredient-name" data-es="Huevo entero" data-en="Whole egg">Huevo entero</div><div class="ingredient-amount" data-es="100 g (aprox. 2 huevos medianos)" data-en="100 g (approx. 2 medium eggs)">100 g (aprox. 2 huevos medianos)</div></div></div>
+      <div class="ingredient-item"><span class="ingredient-emoji">🍬</span><div class="ingredient-text"><div class="ingredient-name" data-es="Azúcar glass (para rebozar)" data-en="Icing sugar (for rolling)">Azúcar glass (para rebozar)</div><div class="ingredient-amount" data-es="al gusto" data-en="as needed">al gusto</div></div></div>
+    </div>
+    <h3 class="section-title" data-es="👨‍🍳 Preparación" data-en="👨‍🍳 Method">👨‍🍳 Preparación</h3>
+    <ol class="steps-list">
+      <li class="step-item">
+      <span class="step-number">1</span>
+      <p class="step-text" data-es="<strong>Mezcla:</strong> Bate la mantequilla blanda con los huevos y la mezcla usando una cuchara de madera o espátula durante <strong>3 minutos</strong> hasta formar una masa compacta." data-en="<strong>Mixing:</strong> Beat the softened butter with the eggs and mix using a wooden spoon or spatula for <strong>3 minutes</strong> until a firm dough forms."><strong>Mezcla:</strong> Bate la mantequilla blanda con los huevos y la mezcla usando una cuchara de madera o espátula durante <strong>3 minutos</strong> hasta formar una masa compacta.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">2</span>
+      <p class="step-text" data-es="<strong>Formado:</strong> Con las manos, forma bolitas del tamaño de una nuez. Pásalas por el plato de azúcar glass asegurándote de que queden bien cubiertas y blancas." data-en="<strong>Shaping:</strong> Roll the dough into walnut-sized balls by hand. Roll each ball generously in icing sugar, making sure they are well coated and white all over."><strong>Formado:</strong> Con las manos, forma bolitas del tamaño de una nuez. Pásalas por el plato de azúcar glass asegurándote de que queden bien cubiertas y blancas.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">3</span>
+      <p class="step-text" data-es="<strong>Reposo en frío:</strong> Colócalas en un plato y mételas al refrigerador durante <strong>al menos 30 minutos</strong>. Esto es clave — al hornearse se agrietan y quedan con el efecto crinkle característico." data-en="<strong>Chilling:</strong> Place on a plate and refrigerate for <strong>at least 30 minutes</strong>. This is essential — the cold dough will crack beautifully in the oven, giving the signature crinkle effect."><strong>Reposo en frío:</strong> Colócalas en un plato y mételas al refrigerador durante <strong>al menos 30 minutos</strong>. Esto es clave — al hornearse se agrietan y quedan con el efecto crinkle característico.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">4</span>
+      <p class="step-text" data-es="<strong>Horneado:</strong> Colócalas separadas en una bandeja y hornea a <strong>170–180°C</strong> durante <strong>10–12 minutos</strong>. Al sacarlas parecerán muy blandas — es normal, tomarán su textura al enfriarse." data-en="<strong>Baking:</strong> Space them well apart on a baking tray and bake at <strong>170–180°C / 150–160°C fan</strong> for <strong>10–12 minutes</strong>. They will look very soft when they come out — this is perfectly normal, they will firm up as they cool."><strong>Horneado:</strong> Colócalas separadas en una bandeja y hornea a <strong>170–180°C</strong> durante <strong>10–12 minutos</strong>. Al sacarlas parecerán muy blandas — es normal, tomarán su textura al enfriarse.</p>
+    </li>
+    </ol>
+  </div>
+</article>
+
+<div class="recipe-divider">· · · ✦ · · ·</div>
+
+<!-- ====== MUFFINS ====== -->
+<article class="recipe-card" id="muffins">
+  <div class="card-image-wrap">
+    <img src="assets/recetas/img12.jpg" alt="Muffins Gluten Free" class="card-image scale-xl">
+  </div>
+  <div class="card-header">
+    <h2 data-es="Muffins / Magdalenas Sin Gluten" data-en="Gluten-Free Muffins">Muffins / Magdalenas Sin Gluten</h2>
+    <div class="card-meta">
+      <span class="meta-pill" data-es="190°C" data-en="190°C">🌡️ 190°C</span>
+      <span class="meta-pill" data-es="25 min" data-en="25 min">⏱️ 25 min</span>
+      <span class="meta-pill" data-es="Con vapor" data-en="With steam">💨 Con vapor</span>
+      <span class="meta-pill" data-es="8–9 huevos medianos" data-en="8–9 medium eggs">🥚 8–9 huevos medianos</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <h3 class="section-title" data-es="🛒 Ingredientes" data-en="🛒 Ingredients">🛒 Ingredientes</h3>
+    <div class="ingredients-grid">
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img4.png" alt="Mezcla Cake Sin Gluten" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Mezcla Cake Sin Gluten" data-en="Gluten-Free Cake Mix">Mezcla Cake Sin Gluten</div>
+        <div class="ingredient-amount">1,000 kg</div>
+      </div>
+    </div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img6.png" alt="Aceite vegetal" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Aceite vegetal" data-en="Vegetable oil">Aceite vegetal</div>
+        <div class="ingredient-amount">480 g</div>
+      </div>
+    </div>
+      <div class="ingredient-item"><span class="ingredient-emoji">🥚</span><div class="ingredient-text"><div class="ingredient-name" data-es="Huevos" data-en="Eggs">Huevos</div><div class="ingredient-amount" data-es="480 g (aprox. 8–9 huevos medianos)" data-en="480 g (approx. 8–9 medium eggs)">480 g (aprox. 8–9 huevos medianos)</div></div></div>
+      <div class="ingredient-item">
+      <span class="ingredient-emoji"><img src="assets/recetas/img5.png" alt="Agua" class="ingredient-icon-img"></span>
+      <div class="ingredient-text">
+        <div class="ingredient-name" data-es="Agua" data-en="Water">Agua</div>
+        <div class="ingredient-amount">60 g</div>
+      </div>
+    </div>
+    </div>
+    <h3 class="section-title" data-es="👨‍🍳 Preparación" data-en="👨‍🍳 Method">👨‍🍳 Preparación</h3>
+    <ol class="steps-list">
+      <li class="step-item">
+      <span class="step-number">1</span>
+      <p class="step-text" data-es="<strong>Mezcla:</strong> En un bol, bate todos los ingredientes con un batidor de varillas manual o batidora eléctrica de varillas durante <strong>3 minutos a velocidad baja</strong> — no metas exceso de aire." data-en="<strong>Mixing:</strong> In a bowl, beat all the ingredients together using a hand whisk or electric hand mixer for <strong>3 minutes on low speed</strong> — avoid incorporating too much air."><strong>Mezcla:</strong> En un bol, bate todos los ingredientes con un batidor de varillas manual o batidora eléctrica de varillas durante <strong>3 minutos a velocidad baja</strong> — no metas exceso de aire.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">2</span>
+      <p class="step-text" data-es="<strong>Moldes:</strong> Reparte la masa en moldes para muffins con capacillos de papel puestos dentro de un molde rígido de cupcakes, llenando hasta <strong>¾ de su capacidad</strong>." data-en="<strong>Lining the tins:</strong> Divide the batter into a muffin tin lined with paper cases, filling each one to <strong>¾ full</strong>. Using a rigid cupcake tin will prevent the cases from spreading."><strong>Moldes:</strong> Reparte la masa en moldes para muffins con capacillos de papel puestos dentro de un molde rígido de cupcakes, llenando hasta <strong>¾ de su capacidad</strong>.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">3</span>
+      <p class="step-text" data-es="<strong>Vapor casero:</strong> Coloca una tacita apta para horno con un poco de agua en una esquina del horno para generar vapor. Precalienta a <strong>190°C</strong>." data-en="<strong>Home steam:</strong> Place a small oven-safe cup filled with a little water in the corner of the oven to create steam. Preheat to <strong>190°C / 170°C fan</strong>."><strong>Vapor casero:</strong> Coloca una tacita apta para horno con un poco de agua en una esquina del horno para generar vapor. Precalienta a <strong>190°C</strong>.</p>
+    </li>
+      <li class="step-item">
+      <span class="step-number">4</span>
+      <p class="step-text" data-es="<strong>Horneado:</strong> Hornea <strong>25 minutos</strong>. Muy importante: cuando falten <strong>10 minutos</strong> (en el minuto 15), abre un poco la puerta del horno y trábala con una cuchara de madera para dejar una rendija. Esto permite que salga la humedad sobrante y los muffins creen una costra perfecta sin bajarse." data-en="<strong>Baking:</strong> Bake for <strong>25 minutes</strong>. Crucially: when there are <strong>10 minutes remaining</strong> (at the 15-minute mark), slightly open the oven door and prop it ajar with a wooden spoon. This allows excess moisture to escape, helping the muffins form a perfect crust without sinking."><strong>Horneado:</strong> Hornea <strong>25 minutos</strong>. Muy importante: cuando falten <strong>10 minutos</strong> (en el minuto 15), abre un poco la puerta del horno y trábala con una cuchara de madera para dejar una rendija. Esto permite que salga la humedad sobrante y los muffins creen una costra perfecta sin bajarse.</p>
+    </li>
+    </ol>
+  </div>
+</article>
+
+</main>
+
+<footer>
+  <img src="assets/recetas/img2.jpg" alt="La Sin Gluten" class="footer-logo">
+  <p class="footer-brand">La Sin Gluten</p>
+  <p data-es="Recetas elaboradas con nuestras mezclas certificadas sin gluten.<br>Para uso casero y profesional." data-en="Recipes made with our certified gluten-free mixes.<br>For home and professional use.">Recetas elaboradas con nuestras mezclas certificadas sin gluten.<br>Para uso casero y profesional.</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const cards = document.querySelectorAll('.recipe-card');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, {threshold:0.08});
+  cards.forEach(c => obs.observe(c));
+
+  // Language switcher
+  let currentLang = 'es';
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+    // Update all elements with data-es / data-en
+    document.querySelectorAll('[data-es]').forEach(el => {
+      const text = el.getAttribute('data-' + lang);
+      if (text) el.innerHTML = text;
+    });
+
+    // Update page title
+    document.title = lang === 'es' ? 'Recetario La Sin Gluten' : 'La Sin Gluten Recipe Book';
+    document.documentElement.lang = lang === 'es' ? 'es' : 'en';
+  }
+</script>
+</body>
+</html>
