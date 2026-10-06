@@ -398,6 +398,7 @@
   details.acc[open] summary::after{transform:rotate(-135deg);}
   .acc-content{padding:4px 0 24px;}
   .info-accs{margin-top:28px;}
+  .defrost-img{display:block; width:100%; max-width:560px; height:auto; margin:0 auto;}
   .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
   .step{text-align:center;}
   .step-n{width:34px; height:34px; border-radius:50%; background:var(--ink); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-weight:700;}
@@ -995,9 +996,8 @@
       <ul class="info-bullets">${d.bullets.map(b=>`<li><strong>${b[0]}:</strong> ${b[1]}</li>`).join('')}</ul>
       <div class="info-accs">
         <details class="acc"><summary>¿Cómo descongelar el producto?</summary>
-          <div class="acc-content"><div class="steps">
-            ${d.defrost.map((t,i)=>`<div class="step"><span class="step-n">${i+1}</span><p>${t}</p></div>`).join('')}
-          </div></div></details>
+          <div class="acc-content"><img class="defrost-img" src="assets/img/descongelar_${p.id}.webp" alt="Instrucciones: ${d.defrost.join(' → ')}">
+          </div></details>
         <details class="acc"><summary>Valores nutricionales</summary>
           <div class="acc-content">
             <div class="nut-title">Valores por 100g</div>
