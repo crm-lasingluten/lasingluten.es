@@ -398,11 +398,11 @@
   details.acc[open] summary::after{transform:rotate(-135deg);}
   .acc-content{padding:4px 0 24px;}
   .info-accs{margin-top:28px;}
-  .defrost-img{display:block; width:100%; max-width:560px; height:auto; margin:0 auto;}
-  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start;}
   .step{text-align:center;}
   .step-n{width:34px; height:34px; border-radius:50%; background:var(--ink); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-weight:700;}
-  .step p{margin-top:12px; font-size:0.86rem;}
+  .step img{display:block; width:auto; max-width:100%; height:130px; object-fit:contain; margin:16px auto 0;}
+  .step p{margin-top:14px; font-size:0.88rem; color:var(--muted); line-height:1.5;}
   .nut-title{text-align:right; font-weight:700; font-size:0.8rem; margin-bottom:8px; color:var(--ink);}
   table.nut{width:100%; border-collapse:collapse; border:1.5px solid var(--sky-deep); font-size:0.92rem;}
   table.nut td{border:1px solid var(--sky-deep); padding:11px 14px; color:var(--ink);}
@@ -996,7 +996,9 @@
       <ul class="info-bullets">${d.bullets.map(b=>`<li><strong>${b[0]}:</strong> ${b[1]}</li>`).join('')}</ul>
       <div class="info-accs">
         <details class="acc"><summary>¿Cómo descongelar el producto?</summary>
-          <div class="acc-content"><img class="defrost-img" src="assets/img/descongelar_${p.id}.webp" alt="Instrucciones: ${d.defrost.join(' → ')}">
+          <div class="acc-content"><div class="steps">
+            ${d.defrost.map((t,i)=>`<div class="step"><span class="step-n">${i+1}</span><img src="assets/img/${p.id==='brownie'?'desc_brownie':'desc_bagel'}_${i+1}.webp" alt="" loading="lazy"><p>${t}</p></div>`).join('')}
+          </div>
           </div></details>
         <details class="acc"><summary>Valores nutricionales</summary>
           <div class="acc-content">
