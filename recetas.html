@@ -160,7 +160,7 @@
     <a href="#panecillos" class="toc-item"><span data-es="🥖 Panecillos" data-en="🥖 Gluten-Free Rolls">🥖 Panecillos</span></a>
     <a href="#pizza" class="toc-item"><span data-es="🍕 Base de Pizza" data-en="🍕 Pizza Base">🍕 Base de Pizza</span></a>
     <a href="#brownie" class="toc-item"><span data-es="🍫 Brownies" data-en="🍫 Brownies">🍫 Brownies</span></a>
-    <a href="#cookies" class="toc-item"><span data-es="🍪 Cookies de Chocolate" data-en="🍪 Chocolate Cookies">🍪 Cookies de Chocolate</span></a>
+    <a href="#cookies" class="toc-item"><span data-es="🍪 Galletas de Chocolate" data-en="🍪 Chocolate Cookies">🍪 Galletas de Chocolate</span></a>
     <a href="#muffins" class="toc-item"><span data-es="🧁 Muffins" data-en="🧁 Muffins">🧁 Muffins</span></a>
   </div>
 </nav>
@@ -423,7 +423,7 @@
         <div class="ingredient-amount">100 g</div>
       </div>
     </div>
-      <div class="ingredient-item"><span class="ingredient-emoji">🍫</span><div class="ingredient-text"><div class="ingredient-name" data-es="Chispas de chocolate con leche" data-en="Milk chocolate chips">Chispas de chocolate con leche</div><div class="ingredient-amount">100 g</div></div></div>
+      <div class="ingredient-item"><span class="ingredient-emoji">🍫</span><div class="ingredient-text"><div class="ingredient-name" data-es="Pepitas de chocolate con leche" data-en="Milk chocolate chips">Pepitas de chocolate con leche</div><div class="ingredient-amount">100 g</div></div></div>
     </div>
     <h3 class="section-title" data-es="👨‍🍳 Preparación" data-en="👨‍🍳 Method">👨‍🍳 Preparación</h3>
     <ol class="steps-list">
@@ -448,7 +448,7 @@
 <!-- ====== COOKIES ====== -->
 <article class="recipe-card" id="cookies">
   <div class="card-image-wrap">
-    <img src="assets/recetas/img11.jpg" alt="Cookies de Chocolate Gluten Free" class="card-image scale-lg">
+    <img src="assets/recetas/img11.jpg" alt="Galletas de Chocolate Gluten Free" class="card-image scale-lg">
   </div>
   <div class="card-header">
     <h2 data-es="Galletas de Chocolate Sin Gluten" data-en="Gluten-Free Chocolate Crinkle Cookies">Galletas de Chocolate Sin Gluten</h2>
@@ -484,7 +484,7 @@
     </li>
       <li class="step-item">
       <span class="step-number">3</span>
-      <p class="step-text" data-es="<strong>Reposo en frío:</strong> Colócalas en un plato y mételas al refrigerador durante <strong>al menos 30 minutos</strong>. Esto es clave — al hornearse se agrietan y quedan con el efecto crinkle característico." data-en="<strong>Chilling:</strong> Place on a plate and refrigerate for <strong>at least 30 minutes</strong>. This is essential — the cold dough will crack beautifully in the oven, giving the signature crinkle effect."><strong>Reposo en frío:</strong> Colócalas en un plato y mételas al refrigerador durante <strong>al menos 30 minutos</strong>. Esto es clave — al hornearse se agrietan y quedan con el efecto crinkle característico.</p>
+      <p class="step-text" data-es="<strong>Reposo en frío:</strong> Colócalas en un plato y mételas al nevera durante <strong>al menos 30 minutos</strong>. Esto es clave — al hornearse se agrietan y quedan con el efecto crinkle característico." data-en="<strong>Chilling:</strong> Place on a plate and refrigerate for <strong>at least 30 minutes</strong>. This is essential — the cold dough will crack beautifully in the oven, giving the signature crinkle effect."><strong>Reposo en frío:</strong> Colócalas en un plato y mételas al nevera durante <strong>al menos 30 minutos</strong>. Esto es clave — al hornearse se agrietan y quedan con el efecto crinkle característico.</p>
     </li>
       <li class="step-item">
       <span class="step-number">4</span>
@@ -576,9 +576,11 @@
 
   // Language switcher
   let currentLang = 'es';
+  try { const q=new URLSearchParams(location.search).get('lang'); const sv=localStorage.getItem('lsg_lang'); if(q==='es'||q==='en') currentLang=q; else if(sv==='es'||sv==='en') currentLang=sv; else if(!/^es/i.test(navigator.language||'es')) currentLang='en'; } catch(e){}
 
   function setLang(lang) {
     currentLang = lang;
+    try { localStorage.setItem('lsg_lang', lang); } catch(e) {}
     document.getElementById('btn-es').classList.toggle('active', lang === 'es');
     document.getElementById('btn-en').classList.toggle('active', lang === 'en');
 
@@ -592,6 +594,7 @@
     document.title = lang === 'es' ? 'Recetario La Sin Gluten' : 'La Sin Gluten Recipe Book';
     document.documentElement.lang = lang === 'es' ? 'es' : 'en';
   }
+  setLang(currentLang);
 </script>
 <script src="cookies.js" defer></script>
 </body>

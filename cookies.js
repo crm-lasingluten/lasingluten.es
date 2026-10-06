@@ -20,7 +20,28 @@
 
   var COOKIE_NAME = "lasingluten_consent";
   var DURATION_DAYS = 395; // 13 meses
-  var POLICY_URL = "politica-cookies.html";
+  function lang() {
+    try { var q = new URLSearchParams(location.search).get("lang"); if (q === "es" || q === "en") return q;
+      var v = localStorage.getItem("lsg_lang"); if (v === "es" || v === "en") return v; } catch (e) {}
+    var h = document.documentElement.lang;
+    if (h === "es" || h === "en") return h;
+    return /^es/i.test(navigator.language || "es") ? "es" : "en";
+  }
+  var EN = {
+    "Aviso de cookies":"Cookie notice","Utilizamos cookies":"We use cookies",
+    "Usamos cookies técnicas necesarias para el funcionamiento de la web y, solo si nos das tu consentimiento, cookies de análisis y de terceros. Puedes aceptarlas, rechazarlas o configurarlas. Más información en nuestra ":"We use technical cookies necessary for the website to work and, only if you give your consent, analytics and third-party cookies. You can accept, reject or configure them. More information in our ",
+    "Política de Cookies":"Cookie Policy","Rechazar":"Reject","Configurar":"Settings","Aceptar todas":"Accept all",
+    "Configuración de cookies":"Cookie settings",
+    "Elige qué cookies aceptas. Puedes cambiar tu elección en cualquier momento desde el enlace «Configurar cookies» del pie de página.":"Choose which cookies you accept. You can change your choice at any time from the “Cookie settings” link in the footer.",
+    "Técnicas":"Technical","Siempre activas":"Always active",
+    "Necesarias para que la web funcione y para recordar tu elección sobre las cookies. No requieren consentimiento.":"Necessary for the website to work and to remember your cookie choice. They do not require consent.",
+    "Analíticas":"Analytics","Nos permiten medir de forma estadística las visitas y el uso de la web para mejorarla.":"They allow us to statistically measure visits and use of the website in order to improve it.",
+    "Marketing y terceros":"Marketing and third parties","Las instalan servicios externos integrados en la web (mapas, vídeos, redes sociales) y pueden usarse para mostrar publicidad personalizada.":"Installed by external services embedded in the website (maps, videos, social media); they may be used to show personalised advertising.",
+    "Rechazar todas":"Reject all","Guardar selección":"Save selection",
+    "Este contenido usa cookies de terceros. ":"This content uses third-party cookies. ","Configurar cookies":"Cookie settings"
+  };
+  function t(x) { return lang() === "en" && EN[x] ? EN[x] : x; }
+  function policyUrl() { return lang() === "en" ? "cookie-policy.html" : "politica-cookies.html"; }
 
   function readConsent() {
     var m = document.cookie.match(new RegExp("(?:^|; )" + COOKIE_NAME + "=([^;]*)"));
@@ -75,7 +96,7 @@
         f.style.display = "none";
         var p = document.createElement("div");
         p.className = "rc-placeholder";
-        p.innerHTML = 'Este contenido usa cookies de terceros. <button type="button" class="btn-link" data-cookie-settings>&nbsp;Configurar cookies</button>';
+        p.innerHTML = t("Este contenido usa cookies de terceros. ") + '<button type="button" class="btn-link" data-cookie-settings>&nbsp;' + t("Configurar cookies") + '</button>';
         f.parentNode.insertBefore(p, f);
       }
     });
@@ -108,16 +129,14 @@
     bannerEl = document.createElement("div");
     bannerEl.className = "rc-banner";
     bannerEl.setAttribute("role", "region");
-    bannerEl.setAttribute("aria-label", "Aviso de cookies");
+    bannerEl.setAttribute("aria-label", t("Aviso de cookies"));
     bannerEl.innerHTML =
-      "<h2>Utilizamos cookies</h2>" +
-      "<p>Usamos cookies técnicas necesarias para el funcionamiento de la web y, solo si nos das tu consentimiento, " +
-      "cookies de análisis y de terceros. Puedes aceptarlas, rechazarlas o configurarlas. " +
-      'Más información en nuestra <a href="' + POLICY_URL + '">Política de Cookies</a>.</p>' +
+      "<h2>" + t("Utilizamos cookies") + "</h2>" +
+      "<p>" + t("Usamos cookies técnicas necesarias para el funcionamiento de la web y, solo si nos das tu consentimiento, cookies de análisis y de terceros. Puedes aceptarlas, rechazarlas o configurarlas. Más información en nuestra ") + '<a href="' + policyUrl() + '">' + t("Política de Cookies") + "</a>.</p>" +
       '<div class="rc-actions">' +
-      '<button type="button" class="rc-btn" data-rc="reject">Rechazar</button>' +
-      '<button type="button" class="rc-btn" data-rc="config">Configurar</button>' +
-      '<button type="button" class="rc-btn" data-rc="accept">Aceptar todas</button>' +
+      '<button type="button" class="rc-btn" data-rc="reject">' + t("Rechazar") + '</button>' +
+      '<button type="button" class="rc-btn" data-rc="config">' + t("Configurar") + '</button>' +
+      '<button type="button" class="rc-btn" data-rc="accept">' + t("Aceptar todas") + '</button>' +
       "</div>";
     bannerEl.addEventListener("click", function (e) {
       var a = e.target.getAttribute("data-rc");
@@ -145,17 +164,16 @@
     overlayEl.className = "rc-overlay";
     overlayEl.innerHTML =
       '<div class="rc-modal" role="dialog" aria-modal="true" aria-labelledby="rc-title">' +
-      '<h2 id="rc-title">Configuración de cookies</h2>' +
-      "<p>Elige qué cookies aceptas. Puedes cambiar tu elección en cualquier momento desde el enlace " +
-      "«Configurar cookies» del pie de página.</p>" +
-      '<div class="rc-cat"><div class="rc-cat-head"><strong>Técnicas</strong><span class="rc-always">Siempre activas</span></div>' +
-      "<p>Necesarias para que la web funcione y para recordar tu elección sobre las cookies. No requieren consentimiento.</p></div>" +
-      category("analytics", "Analíticas", "Nos permiten medir de forma estadística las visitas y el uso de la web para mejorarla.", c.analytics) +
-      category("marketing", "Marketing y terceros", "Las instalan servicios externos integrados en la web (mapas, vídeos, redes sociales) y pueden usarse para mostrar publicidad personalizada.", c.marketing) +
+      '<h2 id="rc-title">' + t("Configuración de cookies") + '</h2>' +
+      "<p>" + t("Elige qué cookies aceptas. Puedes cambiar tu elección en cualquier momento desde el enlace «Configurar cookies» del pie de página.") + "</p>" +
+      '<div class="rc-cat"><div class="rc-cat-head"><strong>' + t("Técnicas") + '</strong><span class="rc-always">' + t("Siempre activas") + '</span></div>' +
+      "<p>" + t("Necesarias para que la web funcione y para recordar tu elección sobre las cookies. No requieren consentimiento.") + "</p></div>" +
+      category("analytics", t("Analíticas"), t("Nos permiten medir de forma estadística las visitas y el uso de la web para mejorarla."), c.analytics) +
+      category("marketing", t("Marketing y terceros"), t("Las instalan servicios externos integrados en la web (mapas, vídeos, redes sociales) y pueden usarse para mostrar publicidad personalizada."), c.marketing) +
       '<div class="rc-actions">' +
-      '<button type="button" class="rc-btn" data-rc="reject">Rechazar todas</button>' +
-      '<button type="button" class="rc-btn" data-rc="save">Guardar selección</button>' +
-      '<button type="button" class="rc-btn" data-rc="accept">Aceptar todas</button>' +
+      '<button type="button" class="rc-btn" data-rc="reject">' + t("Rechazar todas") + '</button>' +
+      '<button type="button" class="rc-btn" data-rc="save">' + t("Guardar selección") + '</button>' +
+      '<button type="button" class="rc-btn" data-rc="accept">' + t("Aceptar todas") + '</button>' +
       "</div></div>";
     overlayEl.addEventListener("click", function (e) {
       var a = e.target.getAttribute("data-rc");
@@ -171,7 +189,9 @@
     overlayEl.querySelector("button").focus();
   }
 
-  window.LaSinGlutenCookies = { open: openPanel, consent: readConsent };
+  window.LaSinGlutenCookies = { open: openPanel, consent: readConsent,
+    relang: function () { if (bannerEl) { bannerEl.remove(); bannerEl = null; showBanner(); }
+      if (overlayEl) { overlayEl.remove(); overlayEl = null; openPanel(); } } };
 
   document.addEventListener("click", function (e) {
     var t = e.target.closest ? e.target.closest("[data-cookie-settings]") : null;
